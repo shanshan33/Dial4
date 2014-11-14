@@ -15,6 +15,7 @@
 		C1EB17041A117C56006616EB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1EB17031A117C56006616EB /* Images.xcassets */; };
 		C1EB17071A117C56006616EB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C1EB17051A117C56006616EB /* LaunchScreen.xib */; };
 		C1EB17131A117C56006616EB /* Dial4Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1EB17121A117C56006616EB /* Dial4Tests.m */; };
+		C1EB171D1A11859B006616EB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1EB171C1A11859B006616EB /* AddressBook.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		C1EB170C1A117C56006616EB /* Dial4Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dial4Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1EB17111A117C56006616EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C1EB17121A117C56006616EB /* Dial4Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dial4Tests.m; sourceTree = "<group>"; };
+		C1EB171C1A11859B006616EB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1EB171D1A11859B006616EB /* AddressBook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +96,7 @@
 				C1EB17001A117C56006616EB /* Main.storyboard */,
 				C1EB17031A117C56006616EB /* Images.xcassets */,
 				C1EB17051A117C56006616EB /* LaunchScreen.xib */,
+				C1EB171C1A11859B006616EB /* AddressBook.framework */,
 				C1EB16F31A117C56006616EB /* Supporting Files */,
 			);
 			path = Dial4;

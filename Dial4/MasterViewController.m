@@ -8,10 +8,18 @@
 
 #import "MasterViewController.h"
 #import "DetailViewController.h"
+#import <AddressBook/AddressBook.h>
+#import <UIKit/UIKit.h>
+#import <UIKit/UIViewController.h>
+
 
 @interface MasterViewController ()
 
 @property NSMutableArray *objects;
+
+@property (nonatomic,strong) NSArray * myContacts;
+@property (nonatomic) ABAddressBookRef addressBook;
+
 @end
 
 @implementation MasterViewController
@@ -32,6 +40,7 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -63,8 +72,70 @@
 
 #pragma mark - Table View
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    self.addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
+
+//    if (nil == self.myContacts) {
+//        ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
+//        if ([self check]) {
+//            <#statements#>
+//        }
+//
+//        
+//    }
     return 1;
+}
+-(BOOL)checkAddressBookAuthorizationStatus:(UITableView *) tableView
+{
+    ABAuthorizationStatus authStatus = ABAddressBookGetAuthorizationStatus();
+    if (authStatus != kABAuthorizationStatusAuthorized) {
+        ABAddressBookRequestAccessWithCompletion(self.addressBook, ^(bool granted, CFErrorRef error) {
+            dispatch_async(dispatch_get_main_queue()
+                           , ^{
+                               if (error) {
+                                   NSLog(@"Error: %@", (__bridge_transfer NSError *)error);
+                               }
+                               else if(!granted)
+                               {
+                                   UIAlertController * alert=   [UIAlertController
+                                                                 alertControllerWithTitle:@"Authorization Denied"
+                                                                 message:@"Set permissions in Setting->General -> Privacy"
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+                                   
+                                   UIAlertAction* ok = [UIAlertAction
+                                                        actionWithTitle:@"OK"
+                                                        style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction * action)
+                                                        {
+                                                            [alert dismissViewControllerAnimated:YES completion:nil];
+                                                            
+                                                        }];
+                                   UIAlertAction* cancel = [UIAlertAction
+                                                            actionWithTitle:@"Cancel"
+                                                            style:UIAlertActionStyleDefault
+                                                            handler:^(UIAlertAction * action)
+                                                            {
+                                                                [alert dismissViewControllerAnimated:YES completion:nil];
+                                                                
+                                                            }];
+                                   
+                                   [alert addAction:ok];
+                                   [alert addAction:cancel];
+                                   
+                                   [self presentViewController:alert animated:YES completion:nil];
+                               }
+                               
+                               else
+                               {
+                                   ABAddressBookRevert(self.addressBook);
+                                   self.myContacts = [NSArray arrayWithArray:(__bridge_transfer NSArray*) ABAddressBookCopyArrayOfAllPeople(self.addressBook)];
+                                   [tableView reloadData];
+                               }
+                           });
+        });
+    }
+    return authStatus == kABAuthorizationStatusAuthorized;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
