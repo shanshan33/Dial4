@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>BF9EA7E0-2AB9-48EF-8144-3BA786F4AED7</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Dial4</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>14D27B9AF40526B3584C6B80B6F91BA290B45D4B</key>
+		<string>https://github.com/shanshan33/Dial4.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Dial4.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>14D27B9AF40526B3584C6B80B6F91BA290B45D4B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/shanshan33/Dial4.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>14D27B9AF40526B3584C6B80B6F91BA290B45D4B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>14D27B9AF40526B3584C6B80B6F91BA290B45D4B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Dial4</string>
+		</dict>
+	</array>
+</dict>
+</plist>

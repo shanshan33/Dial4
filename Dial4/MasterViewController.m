@@ -11,6 +11,7 @@
 #import <AddressBook/AddressBook.h>
 #import <UIKit/UIKit.h>
 #import <UIKit/UIViewController.h>
+#import "ContactsDetailsTableViewController.h"
 
 
 @interface MasterViewController ()
@@ -19,11 +20,14 @@
 
 @property (nonatomic,strong) NSArray * myContacts;
 @property (nonatomic) ABAddressBookRef addressBook;
+@property (nonatomic) NSInteger prevSearchTextLength;
 
 @end
 
 @implementation MasterViewController
 
+
+#pragma mark - Life Cycle
 - (void)awakeFromNib {
     [super awakeFromNib];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -47,14 +51,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)insertNewObject:(id)sender {
-    if (!self.objects) {
-        self.objects = [[NSMutableArray alloc] init];
-    }
-    [self.objects insertObject:[NSDate date] atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
 
 #pragma mark - Segues
 
@@ -89,6 +85,80 @@
     return 1;
 }
 
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.myContacts.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    
+    if (cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+        [cell setAccessoryType:UITableViewCellAccessoryNone];
+    }
+
+        NSData * data = (__bridge_transfer NSData *) ABPersonCopyImageData((__bridge ABRecordRef)[self.myContacts objectAtIndex:indexPath.row]);
+    if (data != nil) {
+        UIImage * image = [UIImage imageWithData:data];
+        [[cell imageView] setImage:image];
+    }
+    else
+    {
+        [[cell imageView] setImage:nil];
+    }
+    
+    cell.textLabel.text = [self personDisplayText:(__bridge ABRecordRef)([self.myContacts objectAtIndex:indexPath.row])];
+    return cell;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [[tableView cellForRowAtIndexPath:indexPath] setSelected:NO animated:YES];
+    
+    if ([self.navigationItem.leftBarButtonItem.title compare:@"Call"] == NSOrderedSame)
+    {
+        [self handleRowSelection:indexPath];
+    }
+    else
+    {
+        ContactsDetailsTableViewController * detailVC = [[ContactsDetailsTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+        detailVC.person = (__bridge ABRecordRef)([self.myContacts objectAtIndex:indexPath.row]);
+        
+        [self.navigationController pushViewController:detailVC animated:YES];
+        
+    }
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        ABRecordRef person = (__bridge ABRecordRef)([self.myContacts objectAtIndex:indexPath.row]);
+        CFErrorRef * error;
+        ABAddressBookRemoveRecord(self.addressBook, person, error);
+        ABAddressBookSave(self.addressBook, error);
+        self.myContacts = nil;
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
+    }
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath{
+}
+
+-(BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+
+
+#pragma mark - Address Book
 // check the authorazation to access data
 -(BOOL)checkAddressBookAuthorizationStatus:(UITableView *) tableView
 {
@@ -112,7 +182,7 @@
                                                                  message:@"Set permissions in Setting->General -> Privacy"
                                                                  preferredStyle:UIAlertControllerStyleAlert];
                                    
-
+                                   
                                    
                                    UIAlertAction * ok = [UIAlertAction actionWithTitle:@"OK"
                                                                                  style:UIAlertActionStyleDefault
@@ -123,10 +193,10 @@
                                    UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                                                     style:UIAlertActionStyleDefault
                                                                                   handler:^(UIAlertAction * action) {
-                                                                                    [alert dismissViewControllerAnimated:YES
-                                                                                                              completion:nil];
-                                                                
-                                                                                }];
+                                                                                      [alert dismissViewControllerAnimated:YES
+                                                                                                                completion:nil];
+                                                                                      
+                                                                                  }];
                                    
                                    [alert addAction:ok];
                                    [alert addAction:cancel];
@@ -146,40 +216,7 @@
     return authStatus == kABAuthorizationStatusAuthorized;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.myContacts.count;
-}
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //default cell
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-//
-//    NSDate *object = self.objects[indexPath.row];
-//    cell.textLabel.text = [object description];
-//    return cell;
-    
-    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    
-    if (cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
-        [cell setAccessoryType:UITableViewCellAccessoryNone];
-    }
-
-        NSData * data = (__bridge_transfer NSData *) ABPersonCopyImageData((__bridge ABRecordRef)[self.myContacts objectAtIndex:indexPath.row]);
-    if (data != nil) {
-        UIImage * image = [UIImage imageWithData:data];
-        [[cell imageView] setImage:image];
-    }
-    else
-    {
-        [[cell imageView] setImage:nil];
-    }
-    
-    cell.textLabel.text = [self personDisplayText:(__bridge ABRecordRef)([self.myContacts objectAtIndex:indexPath.row])];
-    return cell;
-}
 
 -( NSString *)personDisplayText:(ABRecordRef)person
 {
@@ -212,11 +249,6 @@
     }
     
     return fullName;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [self handleRowSelection:indexPath];
 }
 
 
@@ -274,4 +306,39 @@
 }
 
 
+#pragma mark - Search Bar 
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    self.prevSearchTextLength = [searchText length];
+    
+    if ([searchText length] < self.prevSearchTextLength && self.prevSearchTextLength != 0) {
+        self.myContacts =[NSArray arrayWithArray:(__bridge_transfer NSArray *)ABAddressBookCopyArrayOfAllPeople(self.addressBook)];
+        
+        return;
+    }
+    
+    NSMutableArray * filteredContacts = [NSMutableArray arrayWithCapacity:10];
+    
+    for (int i = 0; i < [self.myContacts count]; i++)
+    {
+        ABMultiValueRef phoneNumbers = ABRecordCopyValue((__bridge ABRecordRef)([self.myContacts objectAtIndex:i]), kABPersonPhoneProperty);
+        
+        if (phoneNumbers && ABMultiValueGetCount(phoneNumbers) > 0 ) {
+            
+            for (NSInteger j = 0; j< ABMultiValueGetCount(phoneNumbers); j++)
+            {
+                NSString * phoneNum = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(phoneNumbers, j);
+                
+                if ([phoneNum rangeOfString:searchText].location != NSNotFound)
+                {
+                    [filteredContacts addObject:[self.myContacts objectAtIndex:i]];
+                    j = ABMultiValueGetCount(phoneNumbers);
+                }
+            }
+            
+            CFRelease(phoneNumbers);
+        }
+    }
+    self.myContacts = [NSArray arrayWithArray:filteredContacts];
+}
 @end

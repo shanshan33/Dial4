@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AddressBook/AddressBook.h>
+
 
 @interface ContactsDetailsTableViewController : UITableViewController
+
+@property (nonatomic, assign) ABRecordRef person;
 
 @end

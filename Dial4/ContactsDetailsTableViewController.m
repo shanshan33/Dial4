@@ -7,11 +7,9 @@
 //
 
 #import "ContactsDetailsTableViewController.h"
-#import <AddressBook/AddressBook.h>
 
 @interface ContactsDetailsTableViewController ()
 
-@property (nonatomic, assign) ABRecordRef person;
 @end
 
 @implementation ContactsDetailsTableViewController
@@ -29,7 +27,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -49,11 +47,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DetailCell" forIndexPath:indexPath];
+    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2
-                                      reuseIdentifier:@"DetailCell"];
+                                      reuseIdentifier:@"Cell"];
     }
     
     if (indexPath.row < 2) // names
@@ -63,6 +61,7 @@
     else
     {
         [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
+
     }
     
     NSString * title ;
@@ -71,11 +70,11 @@
     switch (indexPath.row) {
         case 0:
             title = @"First Name";
-            text = (__bridge_transfer NSString *)ABRecordCopyValue(self.person, kABPersonFirstNamePhoneticProperty);
+            text = (__bridge_transfer NSString *)ABRecordCopyValue(self.person, kABPersonFirstNameProperty);
             break;
         case 1:
             title = @"Last Name";
-            text = (__bridge_transfer NSString *)ABRecordCopyValue(self.person, kABPersonLastNamePhoneticProperty);
+            text = (__bridge_transfer NSString *)ABRecordCopyValue(self.person, kABPersonLastNameProperty);
             break;
         default:
             title = @"Phone";
